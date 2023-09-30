@@ -2,6 +2,5 @@
   vars_files:
   - vault_vars.yml
 
-  tasks:
-  - name: echo password
-    shell: echo 'hello {{ ansible_become_password }}'
+  roles:
+  - docker
