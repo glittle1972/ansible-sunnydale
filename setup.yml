@@ -3,4 +3,5 @@
   - vault_vars.yml
 
   roles:
+  - hostname
   - docker

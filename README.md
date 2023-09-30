@@ -1,3 +1,5 @@
+# 20230930 Hostname
+Added xander to /etc/hosts and hostname. Using sun.gwl.org.uk to indicate the internal sunnydale network with internal IPs.
 # 20230929 Setup
 Got a basic setup working. I created a vault_vars.yml files using
 ```bash
