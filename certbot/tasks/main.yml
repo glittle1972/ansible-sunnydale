@@ -1,0 +1,101 @@
+# acl is required to allow ansible become_user to work.
+- name: install dependencies (Debian/Ubuntu)
+  become: true
+  ansible.builtin.apt: 
+    pkg: "{{ item }}"
+    state: latest
+  with_items:
+  - acl
+#     - python-virtualenv
+#     - python
+#     - python-dev
+#     - gcc
+#     - dialog
+#     - libssl-dev
+#     - libffi-dev
+#     - ca-certificates
+#     - libaugeas0
+#     - augeas-lenses
+    
+- name: create certbot user
+  become: true
+  user: name=certbot
+
+- name: create certbot directory
+  become: true
+  file: 
+    path: /opt/certbot
+    state: directory
+    owner: certbot
+    group: certbot
+    mode: 0700
+
+- name: create ssl directory
+  become: true
+  file:
+    path: /opt/certbot/ssl
+    state: directory
+    owner: certbot
+    group: certbot
+    mode: 0700
+
+- name: create certbot venv
+  become: true
+  become_user: certbot
+  ansible.builtin.shell:
+    cmd: python3 -m venv /opt/certbot/venv
+    creates: /opt/certbot/venv
+
+- name: update certbot venv and install modules
+  become: true
+  become_user: certbot
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    extra_args: "--upgrade"
+    virtualenv: /opt/certbot/venv
+  with_items:
+  - pip
+  - setuptools
+  - certbot
+  - certbot-dns-cloudflare
+    
+- name: copy get-certs.sh and certificates
+  become: true
+  become_user: certbot
+  ansible.builtin.copy:
+    src: certbot
+    dest: /opt/
+    owner: certbot
+    group: certbot
+    mode: '700'
+
+- name: service
+  become: true
+  ansible.builtin.copy:
+    src: files/certbot.service
+    dest: /etc/systemd/system/certbot.service
+    owner: root
+    group: root
+    mode: '644'
+
+- name: timer
+  become: true
+  ansible.builtin.copy:
+    src: files/certbot.timer
+    dest: /etc/systemd/system/certbot.timer
+    owner: root
+    group: root
+    mode: '644'
+
+- name: enable timer
+  become: true
+  ansible.builtin.systemd:
+    name: certbot.timer
+    state: started
+    enabled: yes
+
+- name: run get-certs
+  become: true
+  become_user: certbot
+  command: /opt/certbot/get-certs.sh
+  

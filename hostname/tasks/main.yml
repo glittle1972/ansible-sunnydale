@@ -14,5 +14,5 @@
   become: true
   ansible.builtin.lineinfile:
     path: /etc/hosts
-    line: 192.168.5.191 xander.int.gwl.org.uk xander
+    line: 192.168.5.191 xander.sun.gwl.org.uk xander
 
