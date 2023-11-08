@@ -1,3 +1,27 @@
+# 20231108 Traefik
+Working! In the traefik config in the docker-compose file, we set 
+
+```
+command
+  --certificateresolvers.letsencrypt.acme.dnschallenge=true
+  --certificateresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
+labels:
+  "traefik.http.routers.traefik.tls.certresolver=letsencrypt
+environment:
+  "CLOUDLFARE_DNS_API_TOKEN=${cloudflare_api_token}"
+```
+where cloudflare_api_token is defined in the .env file.
+
+# 20231106 Traefik
+I think I've been getting muddled up and started using cloudflare directly as a certificate provider. This is not what I want. I want to use letsencrypt, but with a cloudflare plugin to manage the setting up of DNS verification records.
+
+Co back to Predrag's udemy course and reset traefik's docker config to use letsencrypt, and then work out how to specify using a DNS challenge and the plugin.
+
+# 20231101 Traefik
+Not really a Traefik issue but docker seems to rely on the same openssl issues that I fixed by using a venv for certbot. I have possibly broken my python installation while trying to fix certbot previously.
+
+This was because I'd tried to install pip3 from python itself. Fixed by installing the raspbian package maintainer copy ```sudo apt install python3-pip```.
+
 # 20231011 Certbot
 Create a venv under /opt/certbot using ansible.
 Installed certbot and certbot-dns-cloudflare using pip module of ansible.

@@ -8,7 +8,7 @@ set -x
     --email cloudflare@gordonlittle.co.uk \
     --dns-cloudflare \
     --dns-cloudflare-credentials /opt/certbot/credentials.txt \
-    --domain '*.gwl.org.uk' \
+    --domain '*.sun.gwl.org.uk' \
     --preferred-challenges dns-01 \
     --work-dir /opt/certbot/work \
     --config-dir /opt/certbot/config
