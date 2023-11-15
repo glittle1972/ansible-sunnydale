@@ -1,3 +1,8 @@
+# 20231115 Portainer
+Managed to deploy Portainer as a service using ansible and docker-compose. It has a letsencrypt certificate.
+I did not need to expose ports 8000 or 9443. I think it is exposing HTTP on port 9000, and traefik is proxying through HTTPS 443 to that.
+![view of portainer http service in traefik showing port 9000 in use](images/traefik-portainer-httpservices.png)
+
 # 20231108 Traefik
 Working! In the traefik config in the docker-compose file, we set 
 
