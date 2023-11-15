@@ -6,4 +6,5 @@
 #  - hostname
 #  - docker
 #  - certbot
-  - traefik
+#  - traefik
+  - portainer

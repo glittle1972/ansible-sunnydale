@@ -1,0 +1,33 @@
+version: '3'
+services:
+  portainer:
+    container_name: ${container_name}
+    hostname: ${hostname}
+    image: ${docker_image}:${docker_image_tag}
+    restart: unless-stopped
+    networks:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - data:/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web"
+      - "traefik.http.routers.${service}.rule=Host(`${hostname}`)"
+      - "traefik.http.routers.${service}.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.${service}.entrypoints=https"
+      - "traefik.http.routers.${service}.middlewares=${service}-whitelist"
+      - "traefik.http.services.${service}.loadbalancer.server.port=9000"
+      - "traefik.http.middlewares.${service}-whitelist.ipwhitelist.sourcerange=${ip_whitelist}"
+
+networks:
+  web:
+    external: true
+
+volumes:
+  data:
