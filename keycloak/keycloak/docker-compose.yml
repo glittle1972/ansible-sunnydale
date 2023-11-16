@@ -1,0 +1,58 @@
+version: '3'
+services:
+  keycloak-postgres:
+    image: postgres
+    restart: unless-stopped
+    volumes:
+      - postgres-keycloak-data:/var/lib/postgresql/data
+    networks:
+      - internal
+    expose:
+      - 5432
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_PASSWORD: ${db_password}
+      POSTGRES_USER: ${db_user}
+
+  keycloak:
+    container_name: ${container_name}
+    hostname: ${hostname}
+    image: ${docker_image}:${docker_image_tag}
+    depends_on: 
+      - keycloak-postgres
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: keycloak-postgres
+      DB_DATABASE: keycloak
+      DB_USER: ${db_user}
+      DB_SCHEMA: public
+      DB_PASSWORD: ${db_password}
+      PROXY_ADDRESS_FORWARDING: "true"
+    restart: unless-stopped
+    networks:
+      - web
+      - internal
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web"
+      - "traefik.http.routers.${service}.rule=Host(`${hostname}`)"
+      - "traefik.http.routers.${service}.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.${service}.entrypoints=https"
+      - "traefik.http.routers.${service}.middlewares=${service}-whitelist"
+      - "traefik.http.services.${service}.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.${service}-whitelist.ipwhitelist.sourcerange=${ip_whitelist}"
+
+networks:
+  web:
+    external: true
+  internal:
+    external: false
+
+volumes:
+  postgres-keycloak-data:
+

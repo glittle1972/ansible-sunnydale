@@ -1,3 +1,6 @@
+# 2023116 Keycloak
+Ported the existing docker-compose file for keycoak (which was already a stack as it has two containers; postgres and keycloak). Had to add an new network which is internal to the keycloak stack which both containers are on to allow server<->datbase communications. The keycloak server is then also on the external ```web``` network with traefik and portainer.
+
 # 20231115 Portainer
 Managed to deploy Portainer as a service using ansible and docker-compose. It has a letsencrypt certificate.
 I did not need to expose ports 8000 or 9443. I think it is exposing HTTP on port 9000, and traefik is proxying through HTTPS 443 to that.

@@ -7,4 +7,5 @@
 #  - docker
 #  - certbot
 #  - traefik
-  - portainer
+#  - portainer
+  - keycloak
